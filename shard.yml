@@ -1,0 +1,13 @@
+name: hsh
+version: 0.1.0
+
+authors:
+  - Harish Kumar <harishtpj@hotmail.com>
+
+targets:
+  hsh:
+    main: src/hsh.cr
+
+crystal: '>= 1.16.3'
+
+license: MIT
