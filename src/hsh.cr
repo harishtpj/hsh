@@ -1,36 +1,29 @@
 # The entrypoint for hsh shell
-require "shellwords"
-
+require "./hsh/version"
 require "./hsh/errors"
 require "./hsh/executor"
 require "./hsh/repl"
 
 module Hsh
-  # Metainfo
-  VERSION = "0.1.0"
-  AUTHOR = "Harish Kumar"
-
   def self.run
     print_banner
     reader = REPL.new
 
     loop do
+      # Process.on_terminate { |r| p! r; next } # for debug
+      Process.on_terminate { next }
       begin
         usr_cmd = reader.read_next
         next if !usr_cmd || usr_cmd.strip.empty?
 
-        input = usr_cmd.shellsplit
-        cmd = input[0]
-        args = input[1..]
-
-        Executor.run cmd, args
+        Executor.run usr_cmd
 
       rescue Errors::Exit
         puts "Quitting Shell, goodbye..."
         break
 
-      rescue Errors::CmdNotFound
-        error "Command not found: #{cmd}"
+      rescue e : Errors::CmdNotFound
+        error "Command not found: #{e}"
 
       rescue e : IO::Error
         error "#{e}"
