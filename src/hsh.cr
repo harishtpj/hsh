@@ -1,46 +1,54 @@
-class ShellExitException < Exception
-end
+# The entrypoint for hsh shell
+require "shellwords"
+
+require "./hsh/errors"
+require "./hsh/executor"
+require "./hsh/repl"
 
 module Hsh
+  # Metainfo
   VERSION = "0.1.0"
+  AUTHOR = "Harish Kumar"
 
-  def self.execute(cmd : String)
-    cmd = cmd.split
-    exe = cmd[0]
-    args = cmd[1..]
+  def self.run
+    print_banner
+    reader = REPL.new
 
-    case exe
-    when "cd"
-      puts "Yet to implement"
+    loop do
+      begin
+        usr_cmd = reader.read_next
+        next if !usr_cmd || usr_cmd.strip.empty?
 
-    when "exit"
-      raise ShellExitException.new
+        input = usr_cmd.shellsplit
+        cmd = input[0]
+        args = input[1..]
 
-    else
-      sts = Process.run(exe, args: args, output:STDOUT, error:STDERR)
+        Executor.run cmd, args
+
+      rescue Errors::Exit
+        puts "Quitting Shell, goodbye..."
+        break
+
+      rescue Errors::CmdNotFound
+        error "Command not found: #{cmd}"
+
+      rescue e : IO::Error
+        error "#{e}"
+
+      rescue error
+        error "Unexpected Error: #{error}"
+      end
     end
   end
 
-  def self.run
-    loop do
-      print "hsh> "
-      usr_cmd = gets(chomp: true)
+  private def self.print_banner
+    puts "Welcome to hsh v#{VERSION} - Written by #{AUTHOR}"
+    puts "For more info, type 'help'"
+    puts
+  end
 
-      unless usr_cmd
-        STDERR.puts "Error reading user input: EOFError"
-        next
-      end
-
-      begin
-        execute usr_cmd
-      rescue ShellExitException
-        break
-      rescue e : IO::Error
-        STDERR.puts "Command not found: #{e}"
-      rescue error
-        STDERR.puts "Unexpected Error: #{error}"
-      end
-    end
+  private def self.error(msg : String)
+    STDERR.puts msg
   end
 end
 

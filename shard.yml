@@ -8,6 +8,13 @@ targets:
   hsh:
     main: src/hsh.cr
 
+dependencies:
+  shellwords:
+    github: szTheory/shellwords-crystal 
+
+  reply:
+    github: I3oris/reply
+
 crystal: '>= 1.16.3'
 
 license: MIT
