@@ -8,6 +8,9 @@ module Hsh
   def self.run
     print_banner
     reader = REPL.new
+    shell_info = Hash{
+      :prev_pwd => Dir.current
+    }
 
     loop do
       # Process.on_terminate { |r| p! r; next } # for debug
@@ -16,7 +19,7 @@ module Hsh
         usr_cmd = reader.read_next
         next if !usr_cmd || usr_cmd.strip.empty?
 
-        Executor.run usr_cmd
+        Executor.run usr_cmd.strip, shell_info
 
       rescue Errors::Exit
         puts "Quitting Shell, goodbye..."

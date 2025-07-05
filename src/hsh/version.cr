@@ -3,5 +3,5 @@ module Hsh
   VERSION = "0.1.0"
   AUTHOR = "Harish Kumar"
 
-  PROMPT = "hsh>> "
+  PROMPT = "%{user}@%{host} -> %{cwd} $>> "
 end

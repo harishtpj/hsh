@@ -4,12 +4,34 @@ require "shellwords"
 require "./errors"
 
 module Hsh::Executor
-  def self.run(cmd : String)
+  BUILTINS = ["cd", "cls", "pwd", "exit"]
+  def self.run(cmd : String, shell_info : Hash(Symbol, String))
     input = cmd.shellsplit
     exe = input[0]
     args = input[1..]
 
     case exe
+    when "cls"
+      print "\x1b[2J\x1b[H"
+
+    when "cd"
+      cur_dir = Dir.current
+      if args.empty?
+        Dir.cd Path.home
+      else
+        raise Hsh::Errors::InvalidArgs.new if args.size != 1
+        if args[0] == "-"
+          Dir.cd shell_info[:prev_pwd]
+        else
+          new_dir = Path[cmd.split(2)[1]].normalize
+          Dir.cd new_dir
+        end
+      end
+      shell_info[:prev_pwd] = cur_dir
+
+    when "pwd"
+      puts Dir.current
+
     when "exit"
       raise Hsh::Errors::Exit.new
 
@@ -17,7 +39,7 @@ module Hsh::Executor
       exe_path = find_executable exe
       raise Hsh::Errors::CmdNotFound.new(exe) unless exe_path
 
-      system("#{exe_path} #{args.join ' '}")
+      system("#{exe_path} #{args.shelljoin}")
     end
   end
 

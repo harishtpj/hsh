@@ -5,4 +5,7 @@ module Hsh::Errors
 
   class CmdNotFound < Exception
   end
+
+  class InvalidArgs < Exception
+  end
 end
