@@ -14,7 +14,7 @@ module Hsh::Executor
       raise Hsh::Errors::Exit.new
 
     else
-      exe_path = find_executable cmd
+      exe_path = find_executable exe
       raise Hsh::Errors::CmdNotFound.new(exe) unless exe_path
 
       system("#{exe_path} #{args.join ' '}")
