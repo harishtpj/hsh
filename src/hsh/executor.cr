@@ -2,9 +2,9 @@
 require "shellwords"
 
 require "./errors"
+require "./helpers"
 
 module Hsh::Executor
-  BUILTINS = ["cd", "cls", "pwd", "exit"]
   def self.run(cmd : String, shell_info : Hash(Symbol, String))
     input = cmd.shellsplit
     exe = input[0]
@@ -23,14 +23,16 @@ module Hsh::Executor
         if args[0] == "-"
           Dir.cd shell_info[:prev_pwd]
         else
-          new_dir = Path[cmd.split(2)[1]].normalize
-          Dir.cd new_dir
+          Dir.cd Path[args[0]].normalize
         end
       end
       shell_info[:prev_pwd] = cur_dir
 
     when "pwd"
-      puts Dir.current
+      puts Hsh::Helpers.pwd
+
+    when "whoami"
+      puts Hsh::Helpers::USERNAME
 
     when "exit"
       raise Hsh::Errors::Exit.new

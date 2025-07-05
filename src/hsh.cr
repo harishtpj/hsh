@@ -28,8 +28,11 @@ module Hsh
       rescue e : Errors::CmdNotFound
         error "Command not found: #{e}"
 
+      rescue e : File::NotFoundError
+        error "No such file/directory found: #{e.file.inspect}"
+
       rescue e : IO::Error
-        error "#{e}"
+        p! e
 
       rescue error
         error "Unexpected Error: #{error}"
