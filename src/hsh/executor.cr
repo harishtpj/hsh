@@ -19,7 +19,7 @@ module Hsh::Executor
       if args.empty?
         Dir.cd Path.home
       else
-        raise Hsh::Errors::InvalidArgs.new if args.size != 1
+        raise Hsh::Errors::InvalidArgs.new(1, args.size) if args.size != 1
         if args[0] == "-"
           Dir.cd shell_info[:prev_pwd]
         else
@@ -33,6 +33,11 @@ module Hsh::Executor
 
     when "whoami"
       puts Hsh::Helpers::USERNAME
+
+    when "where"
+      raise Hsh::Errors::InvalidArgs.new(1, args.size) if args.size != 1
+      exe_path = find_executable args[0]
+      puts exe_path || "Executable not found: #{args[0]}"
 
     when "exit"
       raise Hsh::Errors::Exit.new

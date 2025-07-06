@@ -1,4 +1,5 @@
 # The REPL interface for HSH shell
+require "shellwords"
 require "reply"
 require "colorize"
 
@@ -25,11 +26,21 @@ class Hsh::REPL < Reply::Reader
   end
 
   def highlight(expr : String) : String
-    if Hsh::Helpers::BUILTINS.includes?(expr)
-      expr.colorize.yellow.to_s
-    else
-      expr
+    expr = expr.gsub /(?:^|[|;&]\s*|&&\s*|\|\|\s*)(\w[\w.-]*)/ do |match|
+        if Hsh::Helpers::BUILTINS.includes? $1
+          match.sub $1, $1.colorize.yellow.to_s
+        else
+          match
+        end
     end
+
+    expr.gsub /"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'/ do |match|
+      match.colorize.blue.to_s
+    end
+  end
+
+  def auto_complete(name_filter : String, expr : String) : {String, Array(String)}
+    return "Commands", Hsh::Helpers::BUILTINS.dup
   end
 
   def history_file

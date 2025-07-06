@@ -28,6 +28,9 @@ module Hsh
       rescue e : Errors::CmdNotFound
         error "Command not found: #{e}"
 
+      rescue e : Errors::InvalidArgs
+        error "Invalid no. of args received: #{e}"
+
       rescue e : File::NotFoundError
         error "No such file/directory found: #{e.file.inspect}"
 

@@ -7,5 +7,8 @@ module Hsh::Errors
   end
 
   class InvalidArgs < Exception
+    def initialize(expected : Int32, received : Int32)
+      super("expected #{expected}, received #{received}")
+    end
   end
 end

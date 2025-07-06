@@ -1,6 +1,6 @@
 # Module for Helper functions
 module Hsh::Helpers
-  BUILTINS = ["cd", "cls", "pwd", "exit", "whoami"]
+  BUILTINS = ["cd", "cls", "pwd", "exit", "whoami", "where"]
 
   {%if flag?(:win32) %}
     USERNAME = ENV["USERNAME"]
