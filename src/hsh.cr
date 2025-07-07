@@ -37,8 +37,8 @@ module Hsh
       rescue e : IO::Error
         p! e
 
-      rescue error
-        error "Unexpected Error: #{error}"
+      # rescue err
+      #   error "Unexpected Error: #{err}"
       end
     end
   end

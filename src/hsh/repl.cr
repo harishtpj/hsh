@@ -1,5 +1,4 @@
 # The REPL interface for HSH shell
-require "shellwords"
 require "reply"
 require "colorize"
 
@@ -7,6 +6,12 @@ require "./version"
 require "./helpers"
 
 class Hsh::REPL < Reply::Reader
+  def initialize : Nil
+    super
+    word_delimiters.clear
+    word_delimiters << '/' << ' '
+  end
+
   def prompt(io : IO, lno : Int32, color : Bool) : Nil
     cwd = Hsh::Helpers.pwd
     home_dir = Path.home.to_posix
@@ -40,7 +45,12 @@ class Hsh::REPL < Reply::Reader
   end
 
   def auto_complete(name_filter : String, expr : String) : {String, Array(String)}
-    return "Commands", Hsh::Helpers::BUILTINS.dup
+    args = expr.empty? ? [] of String : expr.split[1..]
+    search_path = args.empty? ? "." : args[-1]
+
+    suggestions = Dir.entries(Path[search_path]).select(&.starts_with?(name_filter))
+    suggestions = suggestions.map { |e| File.directory?(e) ? "#{e}/" : e }
+    {"Paths", suggestions}
   end
 
   def history_file
