@@ -1,6 +1,7 @@
 # The Main Executor class for shell
 require "shellwords"
 
+require "./builtins/**"
 require "./errors"
 require "./helpers"
 
@@ -38,6 +39,9 @@ module Hsh::Executor
       raise Hsh::Errors::InvalidArgs.new(1, args.size) if args.size != 1
       exe_path = find_executable args[0]
       puts exe_path || "Executable not found: #{args[0]}"
+
+    when "ls"
+      Hsh::Builtins::Ls.run args
 
     when "exit"
       raise Hsh::Errors::Exit.new

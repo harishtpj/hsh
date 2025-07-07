@@ -1,5 +1,9 @@
 version: 2.0
 shards:
+  phreak:
+    git: https://github.com/shinzlet/phreak.git
+    version: 0.2.0+git.commit.dedc7fddefc8e72ac5c7f58e7139c4b5d798919d
+
   reply:
     git: https://github.com/i3oris/reply.git
     version: 0.4.0

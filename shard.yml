@@ -15,6 +15,9 @@ dependencies:
   reply:
     github: I3oris/reply
 
+  phreak:
+    github: shinzlet/phreak
+
 crystal: '>= 1.16.3'
 
 license: MIT
